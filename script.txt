@@ -1,0 +1,57 @@
+-- Création de la base de données
+CREATE DATABASE IF NOT EXISTS coiffeur_reservation;
+USE coiffeur_reservation;
+
+-- Table des utilisateurs (clients)
+CREATE TABLE utilisateur (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100),
+    prenom VARCHAR(100),
+    email VARCHAR(150) UNIQUE,
+    mot_de_passe VARCHAR(255),
+    telephone VARCHAR(20),
+    date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table des coiffeurs
+CREATE TABLE coiffeur (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100),
+    prenom VARCHAR(100),
+    specialite VARCHAR(150),
+    email VARCHAR(150) UNIQUE,
+    telephone VARCHAR(20)
+);
+
+-- Table des services
+CREATE TABLE service (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100),
+    description TEXT,
+    duree INT, -- en minutes
+    prix DECIMAL(6,2)
+);
+
+-- Table des créneaux disponibles
+CREATE TABLE creneau (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    coiffeur_id INT,
+    date DATE,
+    heure_debut TIME,
+    heure_fin TIME,
+    disponible BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (coiffeur_id) REFERENCES coiffeur(id)
+);
+
+-- Table des réservations
+CREATE TABLE reservation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id INT,
+    creneau_id INT,
+    service_id INT,
+    statut ENUM('en_attente', 'confirmee', 'annulee') DEFAULT 'en_attente',
+    date_reservation DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id),
+    FOREIGN KEY (creneau_id) REFERENCES creneau(id),
+    FOREIGN KEY (service_id) REFERENCES service(id)
+);
